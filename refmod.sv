@@ -3,15 +3,18 @@ import "DPI-C" context function int my_sqrt(int x);​
 class refmod extends uvm_component;
   `uvm_component_utils(refmod)​
 
-  transaction_in tr_in;​
-  transaction_out tr_out;​
-  uvm_analysis_imp #(transaction_in, refmod) in;​
+  ULA_transaction_in ULA_tr_in;​
+  REG_transaction_in REG_tr_in;​
+  uvm_analysis_imp #(ULA_transaction_in, refmod) ULA_in;
+  uvm_analysis_imp #(REG_transaction_in, refmod) REG_in;​
   uvm_analysis_port #(transaction_out) out; ​
+  
   event begin_refmodtask, begin_record, end_record;​
 
   function new(string name = "refmod", uvm_component parent);​
     super.new(name, parent);​
-    in = new("in", this);​
+    ULA_in = new("ULA_in", this);​
+    REG_in = new("REG_in", this);
     out = new("out", this);​
 
   endfunction​
@@ -35,7 +38,10 @@ class refmod extends uvm_component;
       @begin_refmodtask;​
       tr_out = transaction_out::type_id::create("tr_out", this);​
       -> begin_record;​
-      tr_out.result = my_sqrt(tr_in.data);​
+      case(ULA_tr_in.instruc)
+      	2'b00: begin
+      		tr_out.data = ULA_tr_in.data + ULA_tr_in.regi.data;
+      		REG_tr_in​.regi_out.data = tr_out.data;
       #10;​
       -> end_record;​
       out.write(tr_out);​
