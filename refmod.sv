@@ -1,6 +1,8 @@
 import "DPI-C" context function int soma(int x, int y);​
 import "DPI-C" context function int dif(int x, int y);
 import "DPI-C" context function int incre(int x);
+`uvm_analysis_imp_decl(_ULA)
+`uvm_analysis_imp_decl(_REG)
 
 class refmod extends uvm_component;
   `uvm_component_utils(refmod)​
@@ -10,9 +12,16 @@ class refmod extends uvm_component;
   uvm_analysis_imp #(ULA_transaction_in, refmod) ULA_in;
   uvm_analysis_imp #(REG_transaction_in, refmod) REG_in;​
   uvm_analysis_port #(transaction_out) out; ​
-  
-  event begin_refmodtask, begin_record, end_record;​
+  event begin_refmodtask, begin_record, end_record;
 
+  bit [15:0] registrador[0] = 16'hC4F3;
+  bit [15:0] registrador[1] = 16'hB45E;
+  bit [15:0] registrador[2] = 16'hD1E5;
+  bit [15:0] registrador[3] = 16'h1DE4;
+
+  bit [15:0] registrador_ativo;
+
+  
   function new(string name = "refmod", uvm_component parent);​
     super.new(name, parent);​
     ULA_in = new("ULA_in", this);​
@@ -22,8 +31,7 @@ class refmod extends uvm_component;
   endfunction​
 
   virtual function void build_phase(uvm_phase phase);​
-    super.build_phase(phase);​
-    tr_out = transaction_out::type_id::create("tr_out", this);​
+    super.build_phase(phase);​​
 
   endfunction: build_phase​
 
@@ -35,34 +43,50 @@ class refmod extends uvm_component;
     join​
   endtask: run_phase​
 
+
   task refmod_task();​
     forever begin​
       @begin_refmodtask;​
       tr_out = transaction_out::type_id::create("tr_out", this);​
       -> begin_record;​
-		case(ULA_tr_in.instruc)
-			
+		case(ULA_tr_in.instru)
+
+			registrador_ativo = REG_tr_in.data_in
+
 			2'b00: begin
-			tr_out.data = soma(ULA_tr_in.data, ULA_tr_in.regi.data);
+				tr_out.data_out = soma(ULA_tr_in.A, registrador_ativo);
 			end​
 			
 			2'b01: begin
-				if(ULA_tr_in.data >= ULA_tr_in.regi.data)
-					tr_out.data = dif(ULA_tr_in.data, ULA_tr_in.regi.data);
+				if(ULA_tr_in.data >= registrador_ativo)
+					tr_out.data_out = dif(ULA_tr_in.A, registrador_ativo);
 				else
-					tr_out.data = dif(ULA_tr_in.regi.data, ULA_tr_in.data);
+					tr_out.data_out = dif(registrador_ativo, ULA_tr_in.A);
 			end​
 			
 			2'b10: begin​
-				tr_out.data = incre(ULA_tr_in.data);
+				tr_out.data_out = incre(ULA_tr_in.A);
 			end​
 			
 			2'b11: begin
-				tr_out.data = incre(ULA_tr_in.regi.data);
+				tr_out.data_out = incre(registrador_ativo);
 			end​
 
+			case(ULA_transaction_in.reg_sel)
+				2'b00: begin
+					registrador[0] = tr_out.data_out;
+				end​
+				2'b01: begin
+					registrador[1] = tr_out.data_out;
+				end​
+				2'b10: begin
+					registrador[2] = tr_out.data_out;
+				end​
+				2'b11: begin
+					registrador[3] = tr_out.data_out;
+				end​
+			end​case
 		end​case
-		REG_tr_in.data = tr_out.data;
       
       #10;​
       -> end_record;​
@@ -72,7 +96,8 @@ class refmod extends uvm_component;
   endtask : refmod_task​
 
   ​virtual function write (transaction_in t);​
-    tr_in = transaction_in#()::type_id::create("tr_in", this);​
+    ULA_tr_in = transaction_in#()::type_id::create("ULA_tr_in", this);​
+    REG_tr_in = transaction_in#()::type_id::create("REG_tr_in", this);
     tr_in.copy(t);​
     -> begin_refmodtask;​
   endfunction​
