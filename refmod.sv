@@ -1,4 +1,6 @@
-import "DPI-C" context function int my_sqrt(int x);​
+import "DPI-C" context function int soma(int x, int y);​
+import "DPI-C" context function int dif(int x, int y);
+import "DPI-C" context function int incre(int x);
 
 class refmod extends uvm_component;
   `uvm_component_utils(refmod)​
@@ -39,23 +41,24 @@ class refmod extends uvm_component;
       tr_out = transaction_out::type_id::create("tr_out", this);​
       -> begin_record;​
 		case(ULA_tr_in.instruc)
+			
 			2'b00: begin
-				tr_out.data = ULA_tr_in.data + ULA_tr_in.regi.data;
+			tr_out.data = soma(ULA_tr_in.data, ULA_tr_in.regi.data);
 			end​
 			
 			2'b01: begin
 				if(ULA_tr_in.data >= ULA_tr_in.regi.data)
-					tr_out.data = ULA_tr_in.data - ULA_tr_in.regi.data;
+					tr_out.data = dif(ULA_tr_in.data, ULA_tr_in.regi.data);
 				else
-					tr_out.data = ULA_tr_in.regi.data - ULA_tr_in.data;
+					tr_out.data = dif(ULA_tr_in.regi.data, ULA_tr_in.data);
 			end​
 			
 			2'b10: begin​
-				tr_out.data = ULA_tr_in.data + 1;
+				tr_out.data = incre(ULA_tr_in.data);
 			end​
 			
 			2'b11: begin
-				tr_out.data = ULA_tr_in.regi.data +1;
+				tr_out.data = incre(ULA_tr_in.regi.data);
 			end​
 
 		end​case
