@@ -20,6 +20,8 @@ class refmod extends uvm_component;
   bit [15:0] registrador[3] = 16'h1DE4;
 
   bit [15:0] registrador_ativo;
+  
+ 
 
   
   function new(string name = "refmod", uvm_component parent);​
