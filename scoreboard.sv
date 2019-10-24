@@ -6,14 +6,16 @@ class scoreboard extends uvm_scoreboard;​
   comp_type comp;
   refmod rfm;
   uvm_analysis_port #(T) ap_comp;​
-  uvm_analysis_port #(transaction_in) ap_rfm;​
+  uvm_analysis_port #(ULA_transaction_in) ap_rfm_ULA;
+  uvm_analysis_port #(REG_transaction_in) ap_rfm_REG;​
 
 
 
   function new(string name = "scoreboard", uvm_component parent = null);​
     super.new(name, parent);​
     ap_comp = new("ap_comp", this);​
-    ap_rfm = new("ap_rfm", this);​
+    ap_rfm_ULA = new("ap_rfm_ULA", this);
+    ap_rfm_REG = new("ap_rfm_REG", this);​
   endfunction : new​
 
   virtual function void build_phase(uvm_phase phase);​
@@ -25,7 +27,8 @@ class scoreboard extends uvm_scoreboard;​
   virtual function void connect_phase(uvm_phase phase);​
     super.connect_phase(phase);​
     ap_comp.connect(comp.before_export);
-    ap_rfm.connect(rfm.in);
+    ap_rfm_ULA.connect(rfm.ULA_in);
+    ap_rfm_REG.connect(rfm.REG_in);
     rfm.out.connect(comp.after_export);
   endfunction​
 
