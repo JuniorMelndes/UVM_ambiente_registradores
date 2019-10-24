@@ -12,7 +12,7 @@ class refmod extends uvm_component;
   uvm_analysis_imp #(ULA_transaction_in, refmod) ULA_in;
   uvm_analysis_imp #(REG_transaction_in, refmod) REG_in;​
   uvm_analysis_port #(transaction_out) out; ​
-  event begin_refmodtask, begin_record, end_record;
+  event begin_refmodtask, begin_record, end_record, begin_reg;
 
   bit [15:0] registrador[0] = 16'hC4F3;
   bit [15:0] registrador[1] = 16'hB45E;
@@ -48,13 +48,43 @@ class refmod extends uvm_component;
 
   task refmod_task();​
     forever begin​
-      @begin_refmodtask;​
+      fork
+      	@begin_refmodtask;​
+      	@begin_reg;	
+      join
       tr_out = transaction_out::type_id::create("tr_out", this);​
       -> begin_record;​
+		case(REG_tr_in.addr)
+			2'b00: begin
+					registrador[0] = REG_tr_in.data_in;
+				end​
+				2'b01: begin
+					registrador[1] = REG_tr_in.data_in;
+				end​
+				2'b10: begin
+					registrador[2] = REG_tr_in.data_in;
+				end​
+				2'b11: begin
+					registrador[3] = REG_tr_in.data_in;
+				end
+		endcase
+		
+		case(ULA_tr_in.reg_sel)
+			2'b00: begin
+					registrador_ativo = registrador[0];
+				end​
+				2'b01: begin
+					registrador_ativo = registrador[1];
+				end​
+				2'b10: begin
+					registrador_ativo = registrador[2];
+				end​
+				2'b11: begin
+					registrador_ativo = registrador[3];
+				end
+		endcase
+
 		case(ULA_tr_in.instru)
-
-			registrador_ativo = REG_tr_in.data_in
-
 			2'b00: begin
 				tr_out.data_out = soma(ULA_tr_in.A, registrador_ativo);
 			end​
@@ -73,21 +103,6 @@ class refmod extends uvm_component;
 			2'b11: begin
 				tr_out.data_out = incre(registrador_ativo);
 			end​
-
-			case(ULA_transaction_in.reg_sel)
-				2'b00: begin
-					registrador[0] = tr_out.data_out;
-				end​
-				2'b01: begin
-					registrador[1] = tr_out.data_out;
-				end​
-				2'b10: begin
-					registrador[2] = tr_out.data_out;
-				end​
-				2'b11: begin
-					registrador[3] = tr_out.data_out;
-				end​
-			end​case
 		end​case
       
       #10;​
@@ -97,16 +112,18 @@ class refmod extends uvm_component;
 
   endtask : refmod_task​
 	//escrever dois writes
-  ​virtual function write (transaction_in t);​
+  ​virtual function ULA_write (ULA_transaction_in t);​
     ULA_tr_in = transaction_in#()::type_id::create("ULA_tr_in", this);​
     ULA_tr_in.copy(t);​
     -> begin_refmodtask;​
   endfunction​
-	virtual function write (transaction_in t);
-		REG_tr_in = transaction_in#()::type_id::create("REG_tr_in", this);
-		REG_tr_in.copy(t);
-		-> begin_refmodtask	
-	endfunction
+  
+  virtual function REG_write (REG_transaction_in t);
+	REG_tr_in = transaction_in#()::type_id::create("REG_tr_in", this);
+	REG_tr_in.copy(t);
+	-> begin_reg;
+  endfunction
+  
   virtual task record_tr();​
     forever begin​
       @(begin_record);​
