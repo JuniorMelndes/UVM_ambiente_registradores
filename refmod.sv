@@ -1,8 +1,8 @@
 import "DPI-C" context function int soma(int x, int y);​
 import "DPI-C" context function int dif(int x, int y);
 import "DPI-C" context function int incre(int x);
-`uvm_analysis_imp_decl(_ULA)
-`uvm_analysis_imp_decl(_REG)
+`uvm_analysis_imp_decl(ULA_)
+`uvm_analysis_imp_decl(REG_)
 
 class refmod extends uvm_component;
   `uvm_component_utils(refmod)​
@@ -94,14 +94,17 @@ class refmod extends uvm_component;
     end​
 
   endtask : refmod_task​
-
+	//escrever dois writes
   ​virtual function write (transaction_in t);​
     ULA_tr_in = transaction_in#()::type_id::create("ULA_tr_in", this);​
-    REG_tr_in = transaction_in#()::type_id::create("REG_tr_in", this);
-    tr_in.copy(t);​
+    ULA_tr_in.copy(t);​
     -> begin_refmodtask;​
   endfunction​
-
+	virtual function write (transaction_in t);
+		REG_tr_in = transaction_in#()::type_id::create("REG_tr_in", this);
+		REG_tr_in.copy(t);
+		-> begin_refmodtask	
+	endfunction
   virtual task record_tr();​
     forever begin​
       @(begin_record);​
