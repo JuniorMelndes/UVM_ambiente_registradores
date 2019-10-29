@@ -1,0 +1,12 @@
+//
+// File created by:  xrun
+// Do not modify this file
+//
+/mnt/hdd1tera/xmen/ULA_uvm/ambiente/tb/pkg.sv
+/mnt/hdd1tera/xmen/ULA_uvm/ambiente/tb/ULA_interface_if.sv
+/mnt/hdd1tera/xmen/ULA_uvm/ambiente/tb/REG_interface_if.sv
+/mnt/hdd1tera/xmen/ULA_uvm/ambiente/rtl/ula.sv
+/mnt/hdd1tera/xmen/ULA_uvm/ambiente/rtl/rb.sv
+/mnt/hdd1tera/xmen/ULA_uvm/ambiente/rtl/mux.sv
+/mnt/hdd1tera/xmen/ULA_uvm/ambiente/rtl/datapath.sv
+/mnt/hdd1tera/xmen/ULA_uvm/ambiente/tb/top.sv
