@@ -40,9 +40,9 @@ class refmod extends uvm_component;
   virtual task run_phase(uvm_phase phase);​
     super.run_phase(phase);​
     fork​
-      	refmod_task_reg();
-	refmod_task();​
-	record_tr();​
+    	refmod_task_reg();
+		refmod_task();​
+		record_tr();​
     join​
   endtask: run_phase​
 
@@ -63,30 +63,13 @@ class refmod extends uvm_component;
 					registrador[3] = REG_tr_in.data_in;
 				end
 		endcase
+	endtask
 			
   task refmod_task();​
     forever begin​
-      	fork
-		@begin_refmodtask;​
-      		@begin_reg;	
-  	join
-      tr_out = transaction_out::type_id::create("tr_out", this);​
-      -> begin_record;​
-		case(REG_tr_in.addr)
-				2'b00: begin
-					registrador[0] = REG_tr_in.data_in;
-				end​
-				2'b01: begin
-					registrador[1] = REG_tr_in.data_in;
-				end​
-				2'b10: begin
-					registrador[2] = REG_tr_in.data_in;
-				end​
-				2'b11: begin
-					registrador[3] = REG_tr_in.data_in;
-				end
-		endcase
-		
+		@begin_refmodtask;​	
+      	tr_out = transaction_out::type_id::create("tr_out", this);​
+      	-> begin_record;​
 		case(ULA_tr_in.reg_sel)
 				2'b00: begin
 					registrador_ativo = registrador[0];
