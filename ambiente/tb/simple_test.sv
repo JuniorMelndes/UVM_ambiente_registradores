@@ -11,14 +11,16 @@
 
 	virtual function void build_phase(uvm_phase phase);​
 		super.build_phase(phase);​
-    env_h = env::type_id::create("env_h", this);
-​    ULA_seq = ULA_sequence_in::type_id::create("ULA_seq", this);
-	REG_seq = REG_sequence_in::type_id::create("REG_seq", this);
+	    env_h = env::type_id::create("env_h", this);
+	​    ULA_seq = ULA_sequence_in::type_id::create("ULA_seq", this);
+		REG_seq = REG_sequence_in::type_id::create("REG_seq", this);
 	endfunction​
 
 	task run_phase(uvm_phase phase);​
-    ULA_seq.start(env_h.mst_ULA.sqr);
-	REG_seq.start(env_h.mst_REG.sqr);
+		fork
+	    ULA_seq.start(env_h.mst_ULA.sqr);
+		REG_seq.start(env_h.mst_REG.sqr);
+	join
 	endtask: run_phase​
 
 endclass: simple_test

@@ -12,19 +12,19 @@ class env extends uvm_env;​
 
   virtual function void build_phase(uvm_phase phase);​
     super.build_phase(phase);​  
-    mst_ULA = ULA_agent::type_id::create("mst", this);
-    mst_REG = REG_agent::type_id::create("mst", this);​
+    mst_ULA = ULA_agent::type_id::create("mst_ULA", this);
+    mst_REG = REG_agent::type_id::create("mst_REG", this);​
     sb = scoreboard::type_id::create("sb", this);
     cov = coverage::type_id::create("cov",this);
   endfunction​
 
   virtual function void connect_phase(uvm_phase phase);​
     super.connect_phase(phase);​
-    mst_ULA.agt_req_port.connect(cov.ULA_req_port);​
+    //mst_ULA.agt_req_port.connect(cov.ULA_req_port);​
     mst_ULA.agt_resp_port.connect(cov.ULA_resp_port);​
     mst_ULA.agt_resp_port.connect(sb.ap_comp);​
     mst_ULA.agt_req_port.connect(sb.ap_rfm_ULA);      
-  	mst_REG.agt_req_port.connect(sb.ap_rfm_ULA);
+  	mst_REG.agt_req_port.connect(sb.ap_rfm_REG);
   endfunction​
 
 endclass: env

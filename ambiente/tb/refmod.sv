@@ -1,8 +1,8 @@
 import "DPI-C" context function int soma(int x, int y);​
 import "DPI-C" context function int dif(int x, int y);
 import "DPI-C" context function int incre(int x);
-`uvm_analysis_imp_decl(ULA_)
-`uvm_analysis_imp_decl(REG_)
+`uvm_analysis_imp_decl(_ULA)
+`uvm_analysis_imp_decl(_REG)
 
 class refmod extends uvm_component;
   `uvm_component_utils(refmod)​
@@ -10,8 +10,8 @@ class refmod extends uvm_component;
   ULA_transaction_in ULA_tr_in;​
   ULA_transaction_out ULA_tr_out;​
   REG_transaction_in REG_tr_in;​
-  uvm_analysis_imp #(ULA_transaction_in, refmod) ULA_in;
-  uvm_analysis_imp #(REG_transaction_in, refmod) REG_in;​
+  uvm_analysis_imp_ULA #(ULA_transaction_in, refmod) _ULA;
+  uvm_analysis_imp_REG #(REG_transaction_in, refmod) _REG;​
   uvm_analysis_port #(ULA_transaction_out) out; ​
   event begin_refmodtask, begin_record, end_record, begin_reg;
   bit [15:0] registrador[4];
@@ -23,8 +23,8 @@ class refmod extends uvm_component;
   
   function new(string name = "refmod", uvm_component parent);​
     super.new(name, parent);​
-    ULA_in = new("ULA_in", this);​
-    REG_in = new("REG_in", this);
+    _ULA = new( "_ULA", this);​
+    _REG = new("_REG", this);
     out = new("out", this);​
 
 	  registrador[0] = 16'hC4F3;
@@ -115,13 +115,13 @@ class refmod extends uvm_component;
 
   endtask : refmod_task​
 	//escrever dois writes
-  ​virtual function ULA_write (ULA_transaction_in t);​
+  ​virtual function write_ULA (ULA_transaction_in t);​
     ULA_tr_in = ULA_transaction_in#()::type_id::create("ULA_tr_in", this);​
     ULA_tr_in.copy(t);​
     -> begin_refmodtask;​
   endfunction​
   
-  virtual function REG_write (REG_transaction_in t);
+  virtual function write_REG (REG_transaction_in t);
 	REG_tr_in = REG_transaction_in#()::type_id::create("REG_tr_in", this);
 	REG_tr_in.copy(t);
 	-> begin_reg;

@@ -27,8 +27,8 @@ class scoreboard extends uvm_scoreboard;​
   virtual function void connect_phase(uvm_phase phase);​
     super.connect_phase(phase);​
     ap_comp.connect(comp.before_export);
-    ap_rfm_ULA.connect(rfm.ULA_in);
-    ap_rfm_REG.connect(rfm.REG_in);
+    ap_rfm_ULA.connect(rfm._ULA);
+    ap_rfm_REG.connect(rfm._REG);
     rfm.out.connect(comp.after_export);
   endfunction​
 
