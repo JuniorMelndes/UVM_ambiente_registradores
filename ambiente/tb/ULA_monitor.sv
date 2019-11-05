@@ -32,10 +32,11 @@ class ULA_monitor extends uvm_monitor;
 
     virtual task collect_transactions(uvm_phase phase);
       forever begin
-        @(posedge vif.clk_ula) begin
-          if(vif.valid_out) begin
-            @(negedge vif.valid_out);
-            begin_tr(tr_in, "req");
+         @(posedge vif.clk_ula) begin
+          @(posedge vif.clk_ula);
+          if(!vif.valid_ula) begin
+            @(posedge vif.valid_ula)
+            begin_tr(tr_in, "ula_req");
             tr_in.A = vif.A;
             tr_in.reg_sel = vif.reg_sel;
             tr_in.instru = vif.instru;
@@ -45,7 +46,7 @@ class ULA_monitor extends uvm_monitor;
           end
           else if(!vif.valid_out)begin
             @(posedge vif.valid_out);
-            begin_tr(tr_out, "resp");
+            begin_tr(tr_out, "ula_resp");
             tr_out.data_out = vif.data_out;
             resp_port.write(tr_out);
             @(negedge vif.clk_ula);

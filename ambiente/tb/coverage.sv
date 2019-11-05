@@ -15,7 +15,7 @@ class coverage extends uvm_component;
     ULA_resp_port = new("ULA_resp_port", this);
   //  req=new;
     resp=new;
-    min_tr = 10000;
+    min_tr = 1000;
   endfunction
 
   function void build_phase(uvm_phase phase);

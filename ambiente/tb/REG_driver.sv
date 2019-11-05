@@ -6,6 +6,7 @@ class REG_driver extends uvm_driver #(REG_transaction_in);
 	REG_interface_vif vif;
 	REG_transaction_in tr;
 
+
 	function new(string name = "REG_driver", uvm_component parent = null);
 		super.new(name, parent);
 
@@ -38,14 +39,20 @@ class REG_driver extends uvm_driver #(REG_transaction_in);
 		wait (vif.rst === 0);
 		@(posedge vif.rst);
 		forever begin
-			seq_item_port.get_next_item(tr);
       		@(posedge vif.clk_reg);
-       		$display("To aquii");
+			seq_item_port.get_next_item(tr);
+			begin_tr(tr, "driver_reg");
+      		vif.valid_reg  = '1;
+       		//$display("To aquii");
 			vif.data_in = tr.data_in;      
       		vif.addr = tr.addr;
-      		vif.valid_reg  = '1;
+      		//$display("Alo");
       		@(negedge vif.clk_reg);
 			seq_item_port.item_done();
+			end_tr(tr);
+			@(posedge vif.clk_reg);
+			vif.valid_reg = '0;
+
 		end
 	endtask : get_and_drive
 

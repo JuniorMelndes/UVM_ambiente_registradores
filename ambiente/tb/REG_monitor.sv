@@ -21,24 +21,22 @@ class REG_monitor extends uvm_monitor;
 
  virtual task run_phase(uvm_phase phase);
         super.run_phase(phase);
-        fork
-            collect_transactions(phase);
-        join
+        collect_transactions(phase);
+        
     endtask
 
     virtual task collect_transactions(uvm_phase phase);
-      forever begin
-        @(posedge vif.clk_reg) begin
-          if(!vif.valid_reg) begin
-            @(posedge vif.valid_reg);
-            begin_tr(tr_in, "req");
-            tr_in.data_in = vif.data_in;
-            tr_in.addr = vif.addr;
-            req_port.write(tr_in);
-            @(negedge vif.clk_reg);
-            end_tr(tr_in);
-          end
-        end
+		wait (vif.rst === 0);
+	  	@(posedge vif.rst);
+      	forever begin
+        	@(posedge vif.clk_reg iff (vif.valid_reg)) begin
+            	begin_tr(tr_in, "monitor_req");
+            	tr_in.data_in = vif.data_in;
+            	tr_in.addr = vif.addr;
+            	req_port.write(tr_in);
+            	@(negedge vif.clk_reg);
+            	end_tr(tr_in);
+        	end
       end
     endtask
   
