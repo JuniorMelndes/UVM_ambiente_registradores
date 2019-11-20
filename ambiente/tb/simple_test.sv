@@ -17,7 +17,7 @@
 	endfunction​
 
 	task run_phase(uvm_phase phase);​
-		fork
+	fork
 	    ULA_seq.start(env_h.mst_ULA.sqr);
 		REG_seq.start(env_h.mst_REG.sqr);
 	join

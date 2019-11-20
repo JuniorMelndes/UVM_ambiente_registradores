@@ -5,6 +5,7 @@ class REG_monitor extends uvm_monitor;
   event begin_record, end_record;
   REG_transaction_in tr_in;
   uvm_analysis_port #(REG_transaction_in) req_port;
+  
 
   function new(string name, uvm_component parent);
   super.new(name, parent);

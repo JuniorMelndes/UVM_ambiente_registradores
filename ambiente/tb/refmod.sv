@@ -89,6 +89,7 @@ class refmod extends uvm_component;
 
 		case(ULA_tr_in.instru)
 			2'b00: begin
+				//$display("A = %d , B = %d", ULA_tr_in.A,registrador_ativo);
 				ULA_tr_out.data_out = soma(ULA_tr_in.A, registrador_ativo);
 			end​
 			

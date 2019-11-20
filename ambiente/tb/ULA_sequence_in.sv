@@ -11,7 +11,7 @@ class ULA_sequence_in extends uvm_sequence #(ULA_transaction_in);
 		forever begin
 			tr = ULA_transaction_in::type_id::create("tr");
 	      	start_item(tr);
-		      	assert(tr.randomize());
+		      	assert(tr.randomize()/*with{tr.instru == 0;}*/);
 	      	finish_item(tr);
     	end
 	endtask

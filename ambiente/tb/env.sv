@@ -20,11 +20,12 @@ class env extends uvm_env;​
 
   virtual function void connect_phase(uvm_phase phase);​
     super.connect_phase(phase);​
-    //mst_ULA.agt_req_port.connect(cov.ULA_req_port);​
+    mst_ULA.agt_req_port.connect(cov.ULA_req_port);​
     mst_ULA.agt_resp_port.connect(cov.ULA_resp_port);​
     mst_ULA.agt_resp_port.connect(sb.ap_comp);​
     mst_ULA.agt_req_port.connect(sb.ap_rfm_ULA);      
   	mst_REG.agt_req_port.connect(sb.ap_rfm_REG);
+    mst_REG.agt_req_port.connect(cov.REG_req_port);
   endfunction​
 
 endclass: env

@@ -32,7 +32,7 @@ module top;​
     .valid_out    (ULA_dut_if.valid_out )
   );
 
-  
+
   initial begin
     `ifdef XCELIUM
       $recordvars();​

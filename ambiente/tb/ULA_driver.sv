@@ -43,23 +43,16 @@ class ULA_driver extends uvm_driver #(ULA_transaction_in);
 			seq_item_port.get_next_item(tr);
 			begin_tr(tr, "req_driver");
 			vif.valid_ula = '0;
-			driver_transfer(tr);
+			@(posedge vif.clk_ula);
+		    vif.A = tr.A;
+		    vif.reg_sel = tr.reg_sel;
+		    vif.instru = tr.instru;
+		    vif.valid_ula = '1;
+		    @(posedge vif.clk_ula iff vif.valid_out);
 			seq_item_port.item_done();
 			end_tr(tr);
-
-
 		end
 	endtask : get_and_drive
 
-	
-  virtual task driver_transfer(ULA_transaction_in tr);
-      @(posedge vif.clk_ula);
-      //$display("To na ula");
-      vif.A = tr.A;
-      vif.reg_sel = tr.reg_sel;
-      vif.instru = tr.instru;
-      vif.valid_ula = '1;
-      @(posedge vif.clk_ula iff vif.valid_out);
-  endtask : driver_transfer
 
 endclass

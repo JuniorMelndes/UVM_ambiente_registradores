@@ -14,7 +14,7 @@ class REG_transaction_in extends uvm_sequence_item;
   `uvm_object_utils_end
 
   function string convert2string();
-    return $sformatf("{data_in = %d, addr = %d}",data_in,addr);
+    return $sformatf("{data_in = %h, addr = %h}",data_in,addr);
 
   endfunction
 

@@ -8,5 +8,5 @@ extern "C" int dif(int x, int y){
   return x - y;
 }
 extern "C" int incre(int x){
-  return x++;
+  return ++x;
 }

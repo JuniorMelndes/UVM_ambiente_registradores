@@ -21,3 +21,6 @@ clean:
 
 view_waves:
 	simvision waves.shm &
+
+view_cover:
+	imc &
